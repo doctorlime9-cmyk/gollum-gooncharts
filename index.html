@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Gollum Gooncharts</title>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+  <header>
+    <h1>𝗚𝗼𝗹𝗹𝘂𝗺 𝗚𝗼𝗼𝗻𝗰𝗵𝗮𝗿𝘁𝘀</h1>
+    <img src="Bilder/beta.png" alt="Beta Schriftzug">
+  </header>
+
+  <nav>
+    <!-- Navigation -->
+  </nav>
+
+  <main>
+  <div class="container">
+
+  <section class="rangliste">
+  <h2>Rangliste</h2>
+  <table id="rangTabelle">
+    <thead>
+      <tr>
+        <th>Platz</th>
+        <th>Name</th>
+        <th>Anzahl</th>
+        <th>letzte mal gegoont</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Hier kommen die Einträge rein -->
+    </tbody>
+  </table>
+</section>
+
+  <section class="eingabe">
+    <h2>Neuer Eintrag</h2>
+    <form id="goonForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="anzahl">Anzahl:</label>
+      <input type="number" id="anzahl" name="anzahl" min="0" required>
+
+      
+
+    <label for="tag">Tag:</label>
+    <select id="tag" name="tag" required>
+      <option value="">Bitte wählen</option>
+        <option value="01">1</option>
+        <option value="02">2</option>
+        <option value="03">3</option>
+        <option value="04">4</option>
+        <option value="05">5</option>
+        <option value="06">6</option>
+        <option value="07">7</option>
+        <option value="08">8</option>
+        <option value="09">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="27">27</option>
+        <option value="28">28</option>
+        <option value="29">29</option>
+        <option value="30">30</option>
+        <option value="31">31</option>
+    </select>
+    <label for="monat">Monat:</label>
+    <select id="monat" name="monat" required>
+    <option value="">Bitte wählen</option>
+    <option value="01">Januar</option>
+    <option value="02">Februar</option>
+    <option value="03">März</option>
+    <option value="04">April</option>
+    <option value="05">Mai</option>
+    <option value="06">Juni</option>
+    <option value="07">Juli</option>
+    <option value="08">August</option>
+    <option value="09">September</option>
+    <option value="10">Oktober</option>
+    <option value="11">November</option>
+    <option value="12">Dezember</option>
+  </select>
+
+    <label for="jahr">Jahr:</label>
+    <select id="jahr" name="jahr" required>
+    <option value="">Bitte wählen</option>
+    <option value="2025">2025</option>
+    <option value="2026">2026</option>
+    <option value="2027">2027</option>
+    <option value="2028">2028</option>
+    <option value="2029">2029</option>
+    <option value="2030">2030</option>
+  </select>
+  <button type="submit">Eintragen</button>
+  </form>
+  </section>
+  </div>
+  </main>
+
+  <footer>
+    <p>
+      <a href="impressum.html">Impressum</a> | 
+      <a href="datenschutz.html">Datenschutzerklärung</a>
+    </p>
+  </footer>
+  <script src="goontracker.js"></script>
+
+    <div id="consent-popup">
+    <p>
+      Diese Website speichert personenbezogene Goon-Daten auf Servern. Mit deiner Zustimmung erklärst du dich damit einverstanden.<br>
+      <a href="datenschutz.html" target="_blank">Mehr erfahren</a>
+    </p>
+    <button onclick="acceptConsent()">Zustimmen</button>
+    <button onclick="declineConsent()">Ablehnen</button>
+  </div>
+
+  <!-- Script am Ende -->
+  <script>
+    // Nur anzeigen, wenn noch keine Zustimmung gespeichert ist
+    if (localStorage.getItem("goonConsent") === "true") {
+      document.getElementById("consent-popup").style.display = "none";
+    }
+
+    function acceptConsent() {
+      localStorage.setItem("goonConsent", "true");
+      document.getElementById("consent-popup").style.display = "none";
+    }
+
+    function declineConsent() {
+      window.location.href = "https://www.google.com";
+    }
+  </script>
+</body>
+</html>
