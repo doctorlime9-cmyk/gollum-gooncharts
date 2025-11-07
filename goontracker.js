@@ -1,29 +1,23 @@
 let rangliste = [];
 
-const gespeicherteDaten = localStorage.getItem('goonDaten');
-if (gespeicherteDaten) {
-  rangliste = JSON.parse(gespeicherteDaten);
-}
-
 const form = document.getElementById('goonForm');
 const rangTabelle = document.querySelector('#rangTabelle tbody');
 
+// 🔄 Daten von Firebase laden
 window.addEventListener('DOMContentLoaded', () => {
-  rangliste.sort((a, b) => b.anzahl - a.anzahl);
-  rangTabelle.innerHTML = '';
-  rangliste.forEach((person, index) => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${person.name}</td>
-      <td>${person.anzahl}</td>
-      <td>${person.tag}.${person.monat}.${person.jahr}</td>
-    `;
-    rangTabelle.appendChild(row);
-  });
+  fetch('https://gooncharts-default-rtdb.europe-west1.firebasedatabase.app/rangliste.json')
+    .then(res => res.json())
+    .then(data => {
+      rangliste = data || [];
+      aktualisiereTabelle();
+    })
+    .catch(err => {
+      console.error('Fehler beim Laden der Daten:', err);
+    });
 });
 
-form.addEventListener('submit', function(e) {
+// 📤 Formular absenden
+form.addEventListener('submit', function (e) {
   e.preventDefault();
 
   const name = document.getElementById('name').value.trim();
@@ -37,22 +31,42 @@ form.addEventListener('submit', function(e) {
     return;
   }
 
-// Prüfen, ob Name schon existiert
-const vorhandener = rangliste.find(p => p.name.toLowerCase() === name.toLowerCase());
+  const vorhandener = rangliste.find(p => p.name.toLowerCase() === name.toLowerCase());
 
-if (vorhandener) {
-  // Sessions addieren, Datum ggf. aktualisieren
-  vorhandener.anzahl += anzahl;
-  vorhandener.tag = tag;
-  vorhandener.monat = monat;
-  vorhandener.jahr = jahr;
-} else {
-  // Neuer Eintrag
-  rangliste.push({ name, anzahl, tag, monat, jahr });
-}
+  if (vorhandener) {
+    vorhandener.anzahl += anzahl;
+    vorhandener.tag = tag;
+    vorhandener.monat = monat;
+    vorhandener.jahr = jahr;
+  } else {
+    rangliste.push({ name, anzahl, tag, monat, jahr });
+  }
 
   rangliste.sort((a, b) => b.anzahl - a.anzahl);
+  aktualisiereTabelle();
 
+  // 🔒 Lokal speichern (optional)
+  localStorage.setItem('goonDaten', JSON.stringify(rangliste));
+
+  // ☁️ In Firebase speichern
+  fetch('https://gooncharts-default-rtdb.europe-west1.firebasedatabase.app/rangliste.json', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(rangliste)
+  })
+    .then(res => {
+      if (res.ok) {
+        console.log('Daten erfolgreich gespeichert.');
+      } else {
+        console.error('Fehler beim Speichern.');
+      }
+    });
+
+  form.reset();
+});
+
+// 🧾 Tabelle aktualisieren
+function aktualisiereTabelle() {
   rangTabelle.innerHTML = '';
   rangliste.forEach((person, index) => {
     const row = document.createElement('tr');
@@ -64,7 +78,4 @@ if (vorhandener) {
     `;
     rangTabelle.appendChild(row);
   });
-
-  localStorage.setItem('goonDaten', JSON.stringify(rangliste));
-  form.reset();
-});
+}
