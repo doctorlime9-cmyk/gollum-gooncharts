@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Gollum Gooncharts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="/Bilder/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/Bilder/favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+</head>
+<body>
+
+  <header>
+    <h1>𝗚𝗼𝗹𝗹𝘂𝗺 𝗚𝗼𝗼𝗻𝗰𝗵𝗮𝗿𝘁𝘀</h1>
+    <img src="Bilder/beta.png" alt="Beta Schriftzug">
+  </header>
+
+  <nav>
+    <!-- Navigation -->
+  </nav>
+
+  <main>
+
+  <button type="button" id="scrollBtn" class="scrollBtn">Zum Eintragen</button>
+
+  <div class="container">
+
+  <section class="rangliste">
+  <h2>Rangliste</h2>
+  <div class="table-wrapper">
+  <table id="rangTabelle">
+    <thead>
+      <tr>
+        <th>Platz</th>
+        <th>Name</th>
+        <th>Anzahl</th>
+        <th>letzte mal gegoont</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+  </div>
+  </section>
+
+  <section class="statistiks">
+    <h2>Statistiken</h2>
+    <div id="statsBox"></div>
+  </section>
+
+  <section class="eingabe">
+  <div class="title-row">
+  <h2>Neuer Eintrag</h2>
+
+    <div class="info-icon">
+      i
+      <div class="info-text">
+        <section class="hinweis">
+          <p class="achtung">&#9888 Hinweis:</p>
+          <p class="drohung"><span class="underline">Absichtlich FALSCHE Einträge oder TROLLEINTRÄGE</span> werden von der Gemeinschaft der Gooner nicht einfach hingenommen. In solchen Fällen versammeln sich alle Gooner zu einem feierlichen Krisentreffen, bei dem der Schuldige eine streng geheime Spezialstrafe erhält: Ihm werden bei einem traditionellen Ritual die Hoden abgetrennt, gekocht & feierlich verzehrt.
+          <br>
+          <a href="datenschutz.html" target="_blank">Mehr erfahren</a>
+          <br></br>
+          </p>
+          <p>Als gültiger Eintrag zählt jeder bewusst erlebte Orgasmus, unabhängig von Art oder Situation.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+
+  <form id="goonForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="anzahl">Anzahl:</label>
+    <input type="number" id="anzahl" name="anzahl" min="0" required>
+
+    <hr>
+
+    <div class="tag">
+      <button type="button" id="heuteBtn">Heute</button>
+      <button type="button" id="gesternBtn">Gestern</button>
+    </div>
+
+    <label for="datum">Datum:</label>
+    <input type="text" id="datum" name="datum" required>
+
+    <hr>
+
+    <button type="submit">Eintragen</button>
+</form>
+</section>
+</div>
+</main>
+
+<footer>
+  <p class="footer-center">
+    <a href="impressum.html">Impressum</a> | 
+    <a href="datenschutz.html">Datenschutzerklärung</a>
+  </p>
+  <span class="version">Beta v0.15.2</span>
+</footer>
+
+  <script src="goontracker.js"></script>
+
+    <div id="consent-popup">
+    <p>
+       Diese Website speichert und verarbeitet personenbezogene Goon-Daten auf Servern und zeigt bestimmte Angaben (z. B. Name und Anzahl der Einträge) öffentlich in der Rangliste an.<br><br> Mit deiner Zustimmung erklärst du dich damit einverstanden, dass deine Daten verarbeitet und in der Rangliste angezeigt werden.<br><br> <a href="datenschutz.html" target="_blank">Mehr erfahren</a>
+    </p>
+    <button onclick="acceptConsent()">Zustimmen</button>
+    <button onclick="declineConsent()">Ablehnen</button>
+  </div>
+
+  <!-- Script am Ende -->
+  <script>
+    // Nur anzeigen, wenn noch keine Zustimmung gespeichert ist
+    if (localStorage.getItem("goonConsent") === "true") {
+      document.getElementById("consent-popup").style.display = "none";
+    }
+
+    function acceptConsent() {
+      localStorage.setItem("goonConsent", "true");
+      document.getElementById("consent-popup").style.display = "none";
+    }
+
+    function declineConsent() {
+      window.location.href = "https://www.google.com";
+    }
+  </script>
+</body>
+</html>
