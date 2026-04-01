@@ -8,7 +8,9 @@ window.addEventListener('DOMContentLoaded', () => {
   fetch('https://gooncharts-default-rtdb.europe-west1.firebasedatabase.app/rangliste.json')
     .then(res => res.json())
     .then(data => {
-      rangliste = Object.values(data || {});
+      rangliste = Object.values(data || {}).filter(p =>
+        p && p.name && p.anzahl && p.tag && p.monat && p.jahr
+      );
       aktualisiereTabelle();
     })
     .catch(err => {
@@ -34,9 +36,10 @@ form.addEventListener('submit', function (e) {
   fetch('https://gooncharts-default-rtdb.europe-west1.firebasedatabase.app/rangliste.json')
     .then(res => res.json())
     .then(serverData => {
-      let aktuelleListe = serverData || [];
+      let aktuelleListe = Object.values(serverData || {}).filter(p =>
+        p && p.name && p.anzahl && p.tag && p.monat && p.jahr
+      );
 
-      // 2. Merge durchführen
       const vorhandener = aktuelleListe.find(p => p.name.toLowerCase() === name.toLowerCase());
 
       if (vorhandener) {
@@ -56,17 +59,19 @@ form.addEventListener('submit', function (e) {
 
       aktuelleListe.sort((a, b) => b.anzahl - a.anzahl);
 
-      // 3. Zurückschreiben
       return fetch('https://gooncharts-default-rtdb.europe-west1.firebasedatabase.app/rangliste.json', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(aktuelleListe)
-      }).then(() => {
-        // 4. Lokale Liste aktualisieren
-        rangliste = aktuelleListe;
-        aktualisiereTabelle();
-        localStorage.setItem('goonDaten', JSON.stringify(rangliste));
       });
+    })
+    .then(() => {
+      rangliste = aktuelleListe; // ← DIESE ZEILE FIXT ALLES
+      aktualisiereTabelle();
+      localStorage.setItem('goonDaten', JSON.stringify(rangliste));
+    })
+    .catch(err => {
+      console.error('Fehler beim Speichern:', err);
     });
 
   form.reset();
@@ -85,11 +90,9 @@ function aktualisiereTabelle() {
     rangTabelle.appendChild(row);
   });
 
-  
   // Statistiken aktualisieren
   aktualisiereStatistiken();
 }
-
 
 const fp = flatpickr("#datum", {
   dateFormat: "d.m.Y",
@@ -103,16 +106,15 @@ document.getElementById('heuteBtn').addEventListener('click', () => {
   fp.setDate(heuteStr, true);
 });
 
+// Gestern-Button
+document.getElementById('gesternBtn').addEventListener('click', () => {
+  const gestern = new Date();
+  gestern.setDate(gestern.getDate() - 1);
+  fp.setDate(gestern, true);
+});
 
-  // Gestern-Button
-  document.getElementById('gesternBtn').addEventListener('click', () => {
-    const gestern = new Date();
-    gestern.setDate(gestern.getDate() - 1);
-    fp.setDate(gestern, true);
-  });
-
-  document.getElementById('scrollBtn').addEventListener('click', () => {
-    document.querySelector('.eingabe')
+document.getElementById('scrollBtn').addEventListener('click', () => {
+  document.querySelector('.eingabe')
     .scrollIntoView({ behavior: 'smooth', block: 'center' });
   document.getElementById('name').focus({ preventScroll: true });
 });
@@ -131,7 +133,6 @@ function aktualisiereStatistiken() {
     return;
   }
 
-  // helper to add aligned label/value rows
   function addStat(label, value) {
     statsBox.innerHTML += `
       <div class="stat-row">
@@ -141,39 +142,19 @@ function aktualisiereStatistiken() {
     `;
   }
 
-  // Summe aller Anzahl
   const gesamtAnzahl = rangliste.reduce((sum, p) => sum + p.anzahl, 0);
-
-  // Anzahl verschiedener Personen
   const uniquePersonen = new Set(rangliste.map(p => p.name)).size || 1;
 
-  // ---------- GLOBALER ZEITRAUM ----------
-
-  // kleinstes Jahr in den Daten
   const minYear = Math.min(...rangliste.map(p => parseInt(p.jahr, 10)));
-
-  // Start: 1.1. des ersten Jahres mit Eintrag
-  const startDate = new Date(minYear, 0, 1); // Monat 0 = Januar
-
-  // Ende: heute
+  const startDate = new Date(minYear, 0, 1);
   const today = new Date();
-  const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // ohne Zeitanteil
-
-  // Tage im Zeitraum (inklusive)
+  const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const diffTage = Math.floor((endDate - startDate) / 86400000) + 1;
-
-  // Wochen im Zeitraum
   const diffWochen = Math.ceil(diffTage / 7);
-
-  // ---------- DURCHSCHNITTE GESAMT (pro Person) ----------
 
   const durchschnittTagGesamtProPerson = (gesamtAnzahl / diffTage / uniquePersonen).toFixed(2);
   const durchschnittWocheGesamtProPerson = (gesamtAnzahl / diffWochen / uniquePersonen).toFixed(2);
-
-  // Liter gesamt
   const literGesamt = (gesamtAnzahl * 0.004).toFixed(2);
-
-  // ---------- AUSGABE ----------
 
   addStat('Gesamtanzahl Goonings:', gesamtAnzahl);
   statsBox.innerHTML += `<hr class="stat-divider">`;
@@ -182,10 +163,9 @@ function aktualisiereStatistiken() {
   addStat('Ø pro Tag (gesamt):', durchschnittTagGesamtProPerson);
   statsBox.innerHTML += `<hr class="stat-divider">`;
 
-  // Durchschnitt pro Tag pro Person (gleicher globaler Zeitraum!)
   statsBox.innerHTML += `<p><strong>Ø pro Tag pro Person:</strong></p>`;
   rangliste.forEach(p => {
-    const durchschnittProTagPerson = (p.anzahl / diffTage).toFixed(2); // mehr Nachkommastellen, weil es klein sein kann
+    const durchschnittProTagPerson = (p.anzahl / diffTage).toFixed(2);
     statsBox.innerHTML += `
       <div class="stat-row">
         <span></span>
@@ -200,7 +180,6 @@ function aktualisiereStatistiken() {
   addStat('Insgesamt gegoont:', `${literGesamt} Liter`);
   statsBox.innerHTML += `<hr class="stat-divider">`;
 
-  // Liter pro Person
   statsBox.innerHTML += `<p><strong>Liter pro Person:</strong></p>`;
   rangliste.forEach(p => {
     statsBox.innerHTML += `
