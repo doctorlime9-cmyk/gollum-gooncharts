@@ -29,6 +29,8 @@ form.addEventListener('submit', function (e) {
     alert('Bitte alle Felder korrekt ausfüllen.');
     return;
   }
+  
+  aktualisiereTabelle();
 
   const [tag, monat, jahr] = datum.split('.');
 
