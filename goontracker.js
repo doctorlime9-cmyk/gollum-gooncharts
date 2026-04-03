@@ -25,9 +25,9 @@ form.addEventListener('submit', function (e) {
   const anzahl = parseInt(document.getElementById('anzahl').value);
   const datum = document.getElementById('datum').value;
 
-  if (!name || isNaN(anzahl) || !datum) {
-    alert('Bitte alle Felder korrekt ausfüllen.');
-    return;
+  if (!name || isNaN(anzahl) || anzahl <= 0 || !datum) {
+      alert('Bitte alle Felder korrekt ausfüllen.');
+      return;
   }
 
   // Sofort aktualisieren
