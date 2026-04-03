@@ -29,12 +29,12 @@ form.addEventListener('submit', function (e) {
     alert('Bitte alle Felder korrekt ausfüllen.');
     return;
   }
-  
+
+  // Sofort aktualisieren
   aktualisiereTabelle();
 
   const [tag, monat, jahr] = datum.split('.');
 
-  // 1. Aktuelle Daten vom Server laden
   fetch('https://gooncharts-default-rtdb.europe-west1.firebasedatabase.app/rangliste.json')
     .then(res => res.json())
     .then(serverData => {
@@ -65,11 +65,11 @@ form.addEventListener('submit', function (e) {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(aktuelleListe)
-      });
+      }).then(() => aktuelleListe); // ← WICHTIG
     })
-    .then(() => {
-      rangliste = aktuelleListe; // ← DIESE ZEILE FIXT ALLES
-      aktualisiereTabelle();
+    .then(aktuelleListe => {
+      rangliste = aktuelleListe;  // ← Jetzt funktioniert’s
+      aktualisiereTabelle();      // ← Tabelle sofort korrekt
       localStorage.setItem('goonDaten', JSON.stringify(rangliste));
     })
     .catch(err => {
