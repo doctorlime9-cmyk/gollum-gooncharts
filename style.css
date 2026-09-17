@@ -24,7 +24,12 @@ header img {
   height: auto;
 }
 iframe {
-  margin-left: 50%;
+  display: flex;
+  justify-content: center; /* Horizontal zentrieren */
+  align-items: center;     /* Vertikal zentrieren */
+  margin-top: 15px
+}
+
 }
 
 main {
