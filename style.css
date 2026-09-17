@@ -23,6 +23,9 @@ header img {
   width: 15vw;
   height: auto;
 }
+iframe {
+  margin-left: 50%;
+}
 
 main {
   background-color: #2e2e2e;
