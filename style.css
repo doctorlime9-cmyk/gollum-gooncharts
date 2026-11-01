@@ -25,11 +25,9 @@ header img {
 }
 
 iframe {
-  display: block;        /* Macht den iFrame zum Block-Element */
-  margin: 40px auto 0;  /* 15px oben, 'auto' links/rechts zentriert es */
-  width: 420px;
-  height: 184px;
-  border-radius: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 main {
