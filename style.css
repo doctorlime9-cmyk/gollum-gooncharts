@@ -25,6 +25,8 @@ header img {
 }
 
 iframe {
+  margin-right: auto;
+  margin-left: auto;
   margin-top: 50px;
   display: flex;
   align-items: center;
